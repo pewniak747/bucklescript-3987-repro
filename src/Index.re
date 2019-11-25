@@ -23,6 +23,7 @@ let makeContainer = text => {
   content;
 };
 
+/* This uncurried prop definition compiles */
 module BuckleScript3987ReproOk = {
   let makeProps = (~value: string, ~onChange: (. string, int) => unit, ()) => {
     {"value": value, "onChange": onChange};
@@ -45,6 +46,22 @@ ReactDOMRe.render(
   makeContainer("ok"),
 );
 
+/* Extracted type for the uncurried prop compiles as well */
+module BuckleScript3987ReproOk2 = {
+  type onChange = (. string, int) => unit;
+
+  [@react.component]
+  let make = (~value: string, ~onChange: onChange) => {
+    React.null;
+  };
+};
+
+ReactDOMRe.render(
+  <BuckleScript3987ReproOk2 value="test" onChange={(. _, _) => ()} />,
+  makeContainer("ok2"),
+);
+
+/* Inline uncurried prop type causes an error */
 module BuckleScript3987ReproError = {
   [@react.component]
   let make = (~value: string, ~onChange: (. string, int) => unit) => {
